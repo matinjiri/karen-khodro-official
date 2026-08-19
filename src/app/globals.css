@@ -1,0 +1,78 @@
+@import "tailwindcss";
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  direction: rtl;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: #f5f5f5;
+  color: #17171f;
+  font-family: Arial, Tahoma, sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* Slider */
+.price-slider {
+  pointer-events: none;
+  height: 24px;
+}
+
+.price-slider::-webkit-slider-runnable-track {
+  background: transparent;
+}
+
+.price-slider::-moz-range-track {
+  background: transparent;
+}
+
+.price-slider::-webkit-slider-thumb {
+  pointer-events: auto;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: 2px;
+  border: none;
+  border-radius: 9999px;
+  background: #191923;
+  cursor: pointer;
+}
+
+.price-slider::-moz-range-thumb {
+  pointer-events: auto;
+  width: 20px;
+  height: 20px;
+  border: none;
+  border-radius: 9999px;
+  background: #191923;
+  cursor: pointer;
+}
+
+/* Global content width */
+.container-custom {
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}

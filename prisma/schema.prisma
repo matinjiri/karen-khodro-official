@@ -1,0 +1,186 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Product {
+  id   Int    @id @default(autoincrement())
+  slug String @unique
+  name String
+  code String @unique
+
+  image           String
+  description     String?
+  fullDescription String?
+
+  cashPrice     BigInt
+  transferPrice BigInt
+
+  manufacturer   String?
+  productionYear String?
+
+  isPopular Boolean @default(false)
+  isNew     Boolean @default(false)
+
+  filters ProductFilter[]
+
+  gallery        ProductImage[]
+  technicalCheck TechnicalCheck?
+  technicalData  TechnicalData?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProductFilter {
+  productId      Int
+  filterOptionId Int
+
+  product Product @relation(fields: [productId],references: [id],onDelete: Cascade)
+
+  filterOption FilterOption @relation(fields: [filterOptionId],references: [id],onDelete: Cascade)
+
+  @@id([productId, filterOptionId])
+  @@index([filterOptionId])
+}
+
+model Filter {
+  id Int @id @default(autoincrement())
+
+  key   String     @unique
+  title String
+  type  FilterType
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  options FilterOption[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FilterOption {
+  id Int @id @default(autoincrement())
+
+  filterId Int
+
+  filter Filter @relation(fields: [filterId],references: [id],onDelete: Cascade)
+
+  value String
+  label String
+
+  isActive  Boolean @default(true)
+  sortOrder Int     @default(0)
+
+  products ProductFilter[]
+
+  @@unique([filterId, value])
+}
+
+model ProductImage {
+  id        Int    @id @default(autoincrement())
+  url       String
+  sortOrder Int    @default(0)
+
+  productId Int
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+}
+
+enum FilterType {
+  SELECT
+  MULTI_SELECT
+  RANGE
+  BOOLEAN
+}
+
+model TechnicalCheck {
+  id              Int @id @default(autoincrement())
+  purchaseValue   Int
+  quality         Int
+  performance     Int
+  fuelConsumption Int
+
+  productId Int     @unique
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  items TechnicalCheckItem[]
+}
+
+model TechnicalCheckItem {
+  id   Int    @id @default(autoincrement())
+  text String
+  type String
+
+  checkId Int
+  check   TechnicalCheck @relation(fields: [checkId], references: [id], onDelete: Cascade)
+}
+
+model TechnicalData {
+  id Int @id @default(autoincrement())
+
+  productId Int     @unique
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  items TechnicalDataItem[]
+}
+
+model TechnicalDataItem {
+  id    Int    @id @default(autoincrement())
+  label String
+  value String
+  type  String
+
+  technicalDataId Int
+  technicalData   TechnicalData @relation(fields: [technicalDataId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id Int @id @default(autoincrement())
+
+  phone String @unique
+
+  firstName String?
+  lastName  String?
+
+  isAdmin Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions Session[]
+}
+
+model OtpCode {
+  id Int @id @default(autoincrement())
+
+  phone String
+  code  String
+
+  expiresAt DateTime
+  attempts  Int      @default(0)
+  used      Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@index([phone])
+}
+
+model Session {
+  id Int @id @default(autoincrement())
+
+  token String @unique
+
+  userId Int
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  expiresAt DateTime
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+}
